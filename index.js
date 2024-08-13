@@ -1,7 +1,9 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
     {
@@ -32,7 +34,6 @@ app.get('/', (request, response) => {
 
 app.get('/info', (request, response) => {
   const date = new Date()
-  console.log(date)
   response.send(`
 Phonebook has info for ${persons.length} people <br/>
 ${date}
@@ -64,7 +65,6 @@ app.post('/api/persons', (request, response) => {
   const id = Math.floor(Math.random() * 10000000)
 
   const body = request.body
-  console.log("body: ", body)
 
   if(!body.name || !body.number){
     return response.status(400).json({
