@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -72,8 +73,6 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-  const id = Math.floor(Math.random() * 10000000)
-
   const body = request.body
 
   if(!body.name || !body.number){
@@ -82,21 +81,14 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if(persons.map(person => person.name).includes(body.name)){
-    return response.status(400).json({
-      error: "name already exists"
-    })
-  }
-
-  const person = {
-    id: String(id),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
-  persons = persons.concat(person)
-
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const PORT = process.env.PORT || 3001
